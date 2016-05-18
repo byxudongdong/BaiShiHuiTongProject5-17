@@ -1,0 +1,66 @@
+package com.arrive;
+
+public class DaoJianSQLite {
+	public String  BillCode ;
+	public String  PreSite ;
+	public String  VehicleNo ;
+	public String  ScanTime ;
+	public String ScanDate;
+	public int index;
+	public DaoJianSQLite() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public DaoJianSQLite(String billCode, String preSite, String vehicleNo,
+			String scanTime, String scanDate) {
+		super();
+		BillCode = billCode;
+		PreSite = preSite;
+		VehicleNo = vehicleNo;
+		ScanTime = scanTime;
+		ScanDate = scanDate;
+	}
+
+	public String getBillCode() {
+		return BillCode;
+	}
+	public void setBillCode(String billCode) {
+		BillCode = billCode;
+	}
+	
+	public String getScanDate() {
+		return ScanDate;
+	}
+	public void setScanDate(String scanDate) {
+		ScanDate = scanDate;
+	}
+	
+	public String getPreSite() {
+		return PreSite;
+	}
+
+	public void setPreSite(String preSite) {
+		PreSite = preSite;
+	}
+
+	public String getVehicleNo() {
+		return VehicleNo;
+	}
+	public void setVehicleNo(String vehicleNo) {
+		VehicleNo = vehicleNo;
+	}
+	public String getScanTime() {
+		return ScanTime;
+	}
+	public void setScanTime(String scanTime) {
+		ScanTime = scanTime;
+	}
+	public void setIndex(int pox){
+		index = pox;
+	}
+	public int getIndex(){
+		return index;
+	}
+	
+	
+}

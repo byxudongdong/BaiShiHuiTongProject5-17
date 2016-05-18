@@ -1,0 +1,25 @@
+package com.baishi.db.cn;
+
+public class Messsages {
+
+	private String billcode;
+	private String errormessage;
+	public String getBillcode() {
+		return billcode;
+	}
+	public void setBillcode(String billcode) {
+		this.billcode = billcode;
+	}
+	public String getErrormessage() {
+		return errormessage;
+	}
+	public void setErrormessage(String errormessage) {
+		this.errormessage = errormessage;
+	}
+	@Override
+	public String toString() {
+		return  billcode ;
+	}
+	
+
+}

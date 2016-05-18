@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/Android/!svn/ver/554/BaiShiHuiTongProject/src/com/baishi/db/cn
+END
+FaJianSQLite.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/baishi/db/cn/FaJianSQLite.java
+END
+Messsages.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/baishi/db/cn/Messsages.java
+END
+SaveShardMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/Android/!svn/ver/554/BaiShiHuiTongProject/src/com/baishi/db/cn/SaveShardMessage.java
+END
+MyNative.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/baishi/db/cn/MyNative.java
+END
+Holder.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/Android/!svn/ver/503/BaiShiHuiTongProject/src/com/baishi/db/cn/Holder.java
+END
+PacketUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/baishi/db/cn/PacketUtils.java
+END
+Packets.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/Android/!svn/ver/456/BaiShiHuiTongProject/src/com/baishi/db/cn/Packets.java
+END
+PacketSql.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/Android/!svn/ver/524/BaiShiHuiTongProject/src/com/baishi/db/cn/PacketSql.java
+END
+GetSaveDabaseSQ.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/Android/!svn/ver/480/BaiShiHuiTongProject/src/com/baishi/db/cn/GetSaveDabaseSQ.java
+END
+DBHelper.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/Android/!svn/ver/481/BaiShiHuiTongProject/src/com/baishi/db/cn/DBHelper.java
+END

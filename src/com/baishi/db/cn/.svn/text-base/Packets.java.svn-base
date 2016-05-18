@@ -1,0 +1,55 @@
+package com.baishi.db.cn;
+
+public class Packets {
+	private String nextname;//下一站
+	private String workorder;//大包号
+	private String waybillnumber;//运单号
+	private String ScanTime;//扫描时间
+	private String time;//扫描日期
+	private String  loginName;//扫描人
+	private String  dqstation;//当前站点
+	public String getNextname() {
+		return nextname;
+	}
+	public void setNextname(String nextname) {
+		this.nextname = nextname;
+	}
+	public String getWorkorder() {
+		return workorder;
+	}
+	public void setWorkorder(String workorder) {
+		this.workorder = workorder;
+	}
+	public String getWaybillnumber() {
+		return waybillnumber;
+	}
+	public void setWaybillnumber(String waybillnumber) {
+		this.waybillnumber = waybillnumber;
+	}
+	public String getScanTime() {
+		return ScanTime;
+	}
+	public void setScanTime(String scanTime) {
+		ScanTime = scanTime;
+	}
+	public String getTime() {
+		return time;
+	}
+	public void setTime(String time) {
+		this.time = time;
+	}
+	public String getLoginName() {
+		return loginName;
+	}
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
+	}
+	public String getDqstation() {
+		return dqstation;
+	}
+	public void setDqstation(String dqstation) {
+		this.dqstation = dqstation;
+	}
+	
+	
+}

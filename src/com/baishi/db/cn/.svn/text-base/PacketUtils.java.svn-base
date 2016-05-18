@@ -1,0 +1,180 @@
+package com.baishi.db.cn;
+
+public class PacketUtils {
+private String BillCode;//运单号
+private String ScanTime;//扫描时间
+private boolean flag;
+public int CID;
+private String BagNumber;//大包号
+private String DestinationSite;//目的站
+private String scanSite;//当前站点
+private String scanMan;//登录人
+private int  ItemCount;
+private String weight;
+private int dataType;
+private boolean IsScanBillCode;
+private int a ;//判断是否上传过
+public int getA() {
+	return a;
+}
+public void setA(int a) {
+	this.a = a;
+}
+
+public String getBillCode() {
+	return BillCode;
+}
+public void setBillCode(String billCode) {
+	BillCode = billCode;
+}
+public String getScanTime() {
+	return ScanTime;
+}
+public void setScanTime(String scanTime) {
+	ScanTime = scanTime;
+}
+public boolean isFlag() {
+	return flag;
+}
+public void setFlag(boolean flag) {
+	this.flag = flag;
+}
+public int getCID() {
+	return CID;
+}
+public void setCID(int cID) {
+	CID = cID;
+}
+public String getBagNumber() {
+	return BagNumber;
+}
+public void setBagNumber(String bagNumber) {
+	BagNumber = bagNumber;
+}
+public String getDestinationSite() {
+	return DestinationSite;
+}
+public void setDestinationSite(String destinationSite) {
+	DestinationSite = destinationSite;
+}
+public String getScanSite() {
+	return scanSite;
+}
+public void setScanSite(String scanSite) {
+	this.scanSite = scanSite;
+}
+public String getScanMan() {
+	return scanMan;
+}
+public void setScanMan(String scanMan) {
+	this.scanMan = scanMan;
+}
+
+public int getItemCount() {
+	return ItemCount;
+}
+public void setItemCount(int itemCount) {
+	ItemCount = itemCount;
+}
+public String getWeight() {
+	return weight;
+}
+public void setWeight(String weight) {
+	this.weight = weight;
+}
+public int getDataType() {
+	return dataType;
+}
+public void setDataType(int dataType) {
+	this.dataType = dataType;
+}
+public boolean isIsScanBillCode() {
+	return IsScanBillCode;
+}
+public void setIsScanBillCode(boolean isScanBillCode) {
+	IsScanBillCode = isScanBillCode;
+}
+@Override
+public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((BagNumber == null) ? 0 : BagNumber.hashCode());
+	result = prime * result + ((BillCode == null) ? 0 : BillCode.hashCode());
+	result = prime * result + CID;
+	result = prime * result
+			+ ((DestinationSite == null) ? 0 : DestinationSite.hashCode());
+	result = prime * result + (IsScanBillCode ? 1231 : 1237);
+	result = prime * result + ItemCount;
+	result = prime * result + ((ScanTime == null) ? 0 : ScanTime.hashCode());
+	result = prime * result + a;
+	result = prime * result + dataType;
+	result = prime * result + (flag ? 1231 : 1237);
+	result = prime * result + ((scanMan == null) ? 0 : scanMan.hashCode());
+	result = prime * result + ((scanSite == null) ? 0 : scanSite.hashCode());
+	result = prime * result + ((weight == null) ? 0 : weight.hashCode());
+	return result;
+}
+@Override
+public boolean equals(Object obj) {
+	if (this == obj)
+		return true;
+	if (obj == null)
+		return false;
+	if (getClass() != obj.getClass())
+		return false;
+	PacketUtils other = (PacketUtils) obj;
+	if (BagNumber == null) {
+		if (other.BagNumber != null)
+			return false;
+	} else if (!BagNumber.equals(other.BagNumber))
+		return false;
+	if (BillCode == null) {
+		if (other.BillCode != null)
+			return false;
+	} else if (!BillCode.equals(other.BillCode))
+		return false;
+	if (CID != other.CID)
+		return false;
+	if (DestinationSite == null) {
+		if (other.DestinationSite != null)
+			return false;
+	} else if (!DestinationSite.equals(other.DestinationSite))
+		return false;
+	if (IsScanBillCode != other.IsScanBillCode)
+		return false;
+	if (ItemCount != other.ItemCount)
+		return false;
+	if (ScanTime == null) {
+		if (other.ScanTime != null)
+			return false;
+	} else if (!ScanTime.equals(other.ScanTime))
+		return false;
+	if (a != other.a)
+		return false;
+	if (dataType != other.dataType)
+		return false;
+	if (flag != other.flag)
+		return false;
+	if (scanMan == null) {
+		if (other.scanMan != null)
+			return false;
+	} else if (!scanMan.equals(other.scanMan))
+		return false;
+	if (scanSite == null) {
+		if (other.scanSite != null)
+			return false;
+	} else if (!scanSite.equals(other.scanSite))
+		return false;
+	if (weight == null) {
+		if (other.weight != null)
+			return false;
+	} else if (!weight.equals(other.weight))
+		return false;
+	return true;
+}
+@Override
+public String toString() {
+	return  BillCode;
+}
+
+}

@@ -1,0 +1,199 @@
+package com.example.baishihuitong;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import userMessage.XDeviceInfo;
+
+import com.baishi.db.cn.Messsages;
+import com.baishi.db.cn.PacketUtils;
+import com.baishi.db.cn.SaveShardMessage;
+import com.baishihuitong.untils.HttpUrl;
+import com.google.gson.Gson;
+import com.iflytek.speech.SynthesizerPlayer;
+
+import android.R.integer;
+import android.R.string;
+import android.app.Service;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Binder;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.util.Log;
+import android.widget.Toast;
+public class PacketServices extends Service {
+	private Mybind mybind;
+	private List<PacketUtils> xList;
+	private String name ;
+	private String password;
+	private String companyCode;
+	private SharedPreferences ps;
+	private static final String URLDATAUPLOAD="http://opendev.appl.800best.com/hscedev/v1/HTScan/HycoBagging";
+	private static int INT_MGS=0;
+	private static String ZHUANGTAI="com.example.baishihuitong";
+	private int a ;
+	private String billcode="";
+	private String errormessage="";
+	private Timer mTimer;
+	private PacketThread mThread;
+	private int size ;
+	private int f;
+	 private static final String APPID = "appid=519328ab";
+	private Handler mHandler=new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			if (msg.what==INT_MGS) {
+				String result=(String) msg.obj;
+				 Log.i("handleMesge",result);
+			try {
+				JSONObject mJsonObject=new JSONObject(result);
+					a =mJsonObject.getInt("acceptcount");
+//				 JSONArray mObject= mJsonObject.getJSONArray("unhandledscan");
+//				 for (int i = 0; i < mObject.length(); i++) {
+//					 JSONObject mObject2=mObject.getJSONObject(i);
+//					 billcode= mObject2.getString("billcode");
+//					 errormessage=mObject2.getString("errormessage");
+//				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				Iterator<PacketUtils>it=xList.iterator();
+				while (it.hasNext()) {
+					PacketUtils mUtils=	it.next();
+						mUtils.setA(2);	
+						Log.i("handleMesge",mUtils.getBillCode()+"billcode="+billcode);				
+				}			
+				size+=a;
+				Intent xIntent=new Intent(ZHUANGTAI);
+				xIntent.putExtra("size", size);
+				sendBroadcast(xIntent);
+					mTimer.cancel();
+					mThread.cancel();
+					xList.clear();
+			}
+		};
+	};
+@Override
+public void onCreate() {
+	super.onCreate();
+	mybind=new Mybind();
+	ps=getSharedPreferences("mode", MODE_PRIVATE);
+	xList=new ArrayList<PacketUtils>();
+	
+}
+	
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
+		return mybind;
+	}
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		name=intent.getStringExtra("name");
+		password=intent.getStringExtra("password");
+		companyCode=intent.getStringExtra("companycode");
+		Log.i("onStartCommand", "name="+name+"companyCode="+companyCode);
+		return super.onStartCommand(intent, flags, startId);
+	}
+
+public void setNumber(List<PacketUtils> mList){
+			xList.clear();
+	Iterator<PacketUtils>it=mList.iterator();
+	while (it.hasNext()) {
+		PacketUtils mUtils=	it.next();
+		if (mUtils.getA()!=2) {
+			xList.add(0,mUtils);
+		Log.i("httpUrlparamsmap", xList.size()+"");
+		}		
+	}
+	String json=new Gson().toJson(xList);
+	
+	Log.i("setNumber", xList.size()+"<><><><><>"+SaveShardMessage.getchange_count_flag(this)+SaveShardMessage.getchange_sendup_flag(this));	
+	if (xList.size()==SaveShardMessage.getchange_count_flag(this)
+			&&SaveShardMessage.getchange_sendup_flag(this)==1) {
+		mTimer=new Timer();
+		mThread=new PacketThread();
+//		SynthesizerPlayer player = SynthesizerPlayer.createSynthesizerPlayer(PacketServices.this, APPID);
+//        //设置语音朗读者，可以根据需要设置男女朗读，具体请看api文档和官方论坛
+//        player.setVoiceName("vivixiaoyan");//在此设置语音播报的人选例如：vivixiaoyan、vivixiaomei、vivixiaoqi
+//        player.playText("准备开始上传数据，请确保数据正确", "ent=vivi21,bft=5",null);
+		mTimer.schedule(mThread, 10000);
+	}else if (xList.size()<SaveShardMessage.getchange_count_flag(this)) {
+		mTimer=new Timer();
+		mThread=new PacketThread();
+		mTimer.schedule(mThread, SaveShardMessage.getchange_time_flag(this)*60000);
+	}
+}
+
+public void setxUtils(PacketUtils mPacketUtils){
+	Log.i("mPacketUtils", mPacketUtils.getBillCode());
+		xList.remove(mPacketUtils);	
+}
+	class Mybind extends Binder {
+		public PacketServices getService() {
+			return PacketServices.this;
+		}
+	}
+	private  class PacketThread extends TimerTask{
+
+		@Override
+		public void run() {
+			HttpUrl httpUrl = new HttpUrl();
+			Map<String, String> paramsmap = new HashMap<String, String>();
+			String json=new Gson().toJson(xList);
+			paramsmap.put("scanDataList",json );
+			paramsmap.put("xDeviceInfo", getXDeviceInfo());
+			paramsmap.put("userName", "\"" + name + "\"");
+			paramsmap.put("siteCode", "\"" + companyCode + "\"");
+			paramsmap.put("clientTime", "\"" + getCurrentTime("yyyy-MM-dd HH:mm:ss") + "+"+"08:00" +"\"");
+			Log.i("paramsmapPacketThread", name+"======"+getCurrentTime("yyyy-MM-dd HH:mm:ss") + "+"+"08:00" +"\"");
+			Map<String, String> headParams = new HashMap<String,String>();
+			headParams.put("Content-Type", "application/x-www-form-urlencoded");
+			headParams.put("X-Auth-Token", ps.getString("token", ""));
+			headParams.put("X-Auth-Site", companyCode);
+			headParams.put("X-Auth-User",name );
+			Log.i("PacketThread", ps.getString("token", "")+"==========="+getXDeviceInfo());
+			String result  = httpUrl.post(URLDATAUPLOAD,paramsmap, headParams);
+			Log.i("PacketThread", result);
+			mHandler.obtainMessage(INT_MGS, result).sendToTarget();	
+			
+		}
+	
+	}
+	public String getXDeviceInfo(){
+		XDeviceInfo xDevice = new XDeviceInfo();
+		xDevice.setKey(SaveShardMessage.TOKEN +"-"+ getCurrentTime("yyyyMMddHHmm"));
+		xDevice.setPhoneNumber(null);
+		xDevice.setIMEI(null);
+		xDevice.setIMSI(null);
+		xDevice.setDeviceID("108770");
+		xDevice.setDeviceModel(null);
+		xDevice.setSystemType(null);
+		xDevice.setSystemVersion(null);
+		String xDeviceInfo = new Gson().toJson(xDevice);
+		Log.d("RRRRRRRRRR", xDeviceInfo);
+		return xDeviceInfo;
+	}
+	public String getCurrentTime(String current_time) {
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat(current_time);
+		return formatter.format(date);
+	}
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Toast.makeText(getApplicationContext(), "onDestroy", Toast.LENGTH_SHORT).show();
+	}
+}

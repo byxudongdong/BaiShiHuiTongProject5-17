@@ -1,0 +1,102 @@
+package com.baishi.db.cn;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.R.integer;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+public class PacketSql {
+	public static final String KEY_NEXTNAME = "nextname";
+	public static final String KEY_WORKORDER = "workorder";
+	public static final String KEY_WAYBILL_NUMBER = "waybillnumber";
+	private static final String KEY_TIME="ScanTime";
+	private static final String KEY_DATETIME="Time";
+	private static final String LOGINNAME="loginName";
+	private static final String SQSTATION="dqstation";
+	private static final String PROFESSDATABASE="BaiShiJiBao";
+	private DBHelper mDbHelper;
+	private SQLiteDatabase mDatabase;
+	private ContentValues initialValues;
+	private List<PacketUtils> mList;
+	private Packets mPackets;
+	private List<Packets> xList;
+	public PacketSql(Context mContext){
+		mDbHelper=new DBHelper(mContext);
+		mList=new ArrayList<PacketUtils>();
+		xList=new ArrayList<Packets>();
+	}
+	public List<Packets>  QueryProfession(String time) {
+		xList.clear();
+		mDatabase=mDbHelper.getWritableDatabase();
+		Log.i("QueryProfession", time);
+		Cursor cursor = mDatabase.rawQuery("SELECT * FROM"+" "+PROFESSDATABASE+" "+"WHERE "+KEY_DATETIME+"=?",new String[]{time});
+		while (cursor.moveToNext()) {
+			mPackets=new Packets();
+			mPackets.setNextname(cursor.getString(cursor.getColumnIndex(KEY_NEXTNAME)));
+			mPackets.setWorkorder(cursor.getString(cursor.getColumnIndex(KEY_WORKORDER)));
+			mPackets.setWaybillnumber(cursor.getString(cursor.getColumnIndex(KEY_WAYBILL_NUMBER)));
+			mPackets.setScanTime(cursor.getString(cursor.getColumnIndex(KEY_TIME)));
+			mPackets.setTime(cursor.getString(cursor.getColumnIndex(KEY_DATETIME)));
+			mPackets.setLoginName(cursor.getString(cursor.getColumnIndex(LOGINNAME)));
+			mPackets.setDqstation(cursor.getString(cursor.getColumnIndex(SQSTATION)));
+			xList.add(mPackets);
+			
+		}
+		Log.i("setOnClickListener", mList.size()+"");	
+		mDatabase.close();	
+		return xList;
+	}
+	public long createDataUpload(String nextname, String workorder, String waybillnumber,String ScanTime,String time,String loginName,String dqstation) {
+			mDatabase=mDbHelper.getWritableDatabase();
+			 initialValues = new ContentValues();	
+			initialValues.put(KEY_NEXTNAME, nextname);
+			initialValues.put(KEY_WORKORDER, workorder);
+			initialValues.put(KEY_WAYBILL_NUMBER, waybillnumber);
+			initialValues.put(KEY_TIME, ScanTime);
+			initialValues.put(KEY_DATETIME, time);
+			initialValues.put(LOGINNAME, loginName);
+			initialValues.put(SQSTATION, dqstation);
+		long a =mDatabase.insert(PROFESSDATABASE, null, initialValues);	
+			mDatabase.close();	
+Log.i("createDataUpload", (int)a+""+"nextname="+nextname+"workorder"+workorder+"waybillnumber="+waybillnumber+"ScanTime="+ScanTime+"time="+time+"loginName"+loginName+"dqstation"+dqstation);
+			return a;
+	}	
+	public List<PacketUtils> companyLists(int  maxResult ) {
+		mDatabase=mDbHelper.getWritableDatabase();
+Cursor cursor = mDatabase.rawQuery( " select * from "+PROFESSDATABASE+" order by _id desc limit ? ",new String[]{String.valueOf(maxResult)});
+		while (cursor.moveToNext())
+			{
+				PacketUtils mUtils = new PacketUtils();
+				mUtils.setScanTime(cursor.getString(cursor.getColumnIndex(KEY_TIME)));
+				mUtils.setBillCode(cursor.getString(cursor.getColumnIndex(KEY_WAYBILL_NUMBER)));  
+				mUtils.setFlag(false);
+				mUtils.setBagNumber(cursor.getString(cursor.getColumnIndex(KEY_WORKORDER)));
+				mUtils.setCID(0);
+				mUtils.setA(2);
+				mUtils.setDataType(1);
+				mUtils.setDestinationSite(cursor.getString(cursor.getColumnIndex(KEY_NEXTNAME)));
+				mUtils.setIsScanBillCode(true);
+				mUtils.setItemCount(1);
+				mUtils.setScanMan(cursor.getString(cursor.getColumnIndex(LOGINNAME)));
+				mUtils.setScanSite(cursor.getString(cursor.getColumnIndex(SQSTATION)));
+				mUtils.setWeight("");
+				mList.add(mUtils);				
+		}
+		Log.i("companyLists", mList.size()+"");
+		cursor.close();
+		mDatabase.close();
+		return mList;
+	}
+	/*
+	 * 刪除語句
+	 */
+	public void deleteInformation(String number){
+		mDatabase=mDbHelper.getWritableDatabase();
+		mDatabase.execSQL("delete from"+" "+ PROFESSDATABASE +" "+"where" +" "+KEY_WAYBILL_NUMBER+"=?",new String[]{number});
+		mDatabase.close();
+	}
+}

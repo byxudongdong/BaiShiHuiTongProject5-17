@@ -1,0 +1,22 @@
+package com.baishihuitong.untils;
+
+import com.example.baishihuitong.PacketServices;
+
+import android.app.Application;
+
+public class MyApplication extends Application {
+private PacketServices services;	
+ @Override
+public void onCreate() {
+	super.onCreate();
+}
+ public void setServices(PacketServices services)
+ {
+     this.services = services;
+ }
+ 
+ public PacketServices getServices()
+ {
+     return services;
+ }
+}

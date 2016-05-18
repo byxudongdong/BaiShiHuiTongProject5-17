@@ -1,0 +1,217 @@
+package com.example.baishihuitong;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.baishi.db.cn.SaveShardMessage;
+import com.baishihuitong.untils.HttpUrl;
+import com.baishihuitong.untils.Login;
+import com.baishihuitong.untils.MD5transformation;
+
+public class LoginActivity extends Activity {
+	private Button login;
+	public static String result = "";
+	private EditText name;
+	private EditText password;
+	private EditText companycode;
+	private TextView userText;
+	private TextView nametext;
+	private SharedPreferences mPreferences;
+	private Button infoButton;
+	public LinearLayout login_dialog_progress_line;
+	public boolean logining_flag = false;
+	public Thread m_thread;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		//取消状态栏   
+		  this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
+		    WindowManager.LayoutParams.FLAG_FULLSCREEN); 
+		setContentView(R.layout.main);
+		init();
+		login.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(!logining_flag){
+					if (name.getText().toString().length()>0&&password.getText().toString().length()>0&&companycode.getText().toString().length()>0){
+						login_dialog_progress_line.setVisibility(View.VISIBLE);
+						logining_flag = true;
+						new getListTask().execute();
+						m_thread = new Thread(new Runnable() {
+							
+							@Override
+							public void run() {
+								try {
+									Thread.sleep(5000);
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								handler.sendEmptyMessage(0x001);
+							}
+						});
+						m_thread.start();
+					}else {
+						Toast.makeText(getApplicationContext(), "用户名密码不能为空！",Toast.LENGTH_SHORT).show();
+						
+					}
+				}
+			}
+		});
+		infoButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+			}
+		});
+	}
+
+	public void miss_focuse(){
+		name.setEnabled(false);
+	}
+	public void init() {
+		login = (Button) findViewById(R.id.loginbtn);
+		name=(EditText) findViewById(R.id.name);
+		password=(EditText) findViewById(R.id.password);
+		companycode=(EditText) findViewById(R.id.wangname);
+		userText=(TextView) findViewById(R.id.userText);
+		nametext=(TextView) findViewById(R.id.nametext);	
+		infoButton=(Button) findViewById(R.id.xinxi);
+		login_dialog_progress_line = (LinearLayout) findViewById(R.id.login_dialog_progress_line);
+		login_dialog_progress_line.setVisibility(View.GONE);
+		mPreferences=getSharedPreferences("mode", MODE_PRIVATE);
+		userText.setText(mPreferences.getString("username", "未定义用户名"));
+		nametext.setText(mPreferences.getString("sitename", "未定义站点"));
+		name.setText(mPreferences.getString("X-Auth-User", ""));
+		companycode.setText(mPreferences.getString("X-Auth-Site", ""));
+	}
+	
+	Handler handler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			if (msg.what == 0x001) {
+				logining_flag = false;
+				login_dialog_progress_line.setVisibility(View.GONE);
+				m_thread.interrupt();
+			}
+		};
+	};
+	
+	/**
+	 * 异步任务
+	 * {"issuccess":true,"validationflag":-1,"validationmessage":"验证通过",
+	 * "needtwovalidation":false,"hsuserflag":0,"hsusermessage":"",
+	 * "hsuserguid":"eca85b7c-0a20-42b4-a5db-8baad480197f",
+	 * "usercode":"999997.003","username":"小张","sitecode":"999997",
+	 * "sitename":"站点B","sitetype":1,"sitetypename":"一级站点",
+	 * "clientsitetypecode":1,"token":"da55fbae-ee2e-4374-aadb-9aee5c7d40b0",
+	 * "innerexception":null,"settlementsitecode":"999997","isweakpassword":false}
+	 * @author Administrator
+	 * 
+	 */
+	class getListTask extends AsyncTask<Void, Void, String> {
+
+		@Override
+		protected String doInBackground(Void... params) {
+			
+			HttpUrl httpUrl = new HttpUrl();
+			Map<String, String> paramsmap = new HashMap<String, String>();
+			paramsmap.put("version", "1");
+			paramsmap.put("userName", "\""+name.getText().toString()+"\"");
+			paramsmap.put("password", "\""+MD5transformation.MD5(password.getText().toString())+"\"");
+			paramsmap.put("siteCode", "\""+companycode.getText().toString()+"\"");
+			paramsmap.put("guid", "\"108770\"");
+			paramsmap.put("location", "");
+			paramsmap.put("mac", "");
+			paramsmap.put("imei", "");
+			paramsmap.put("imsi", "");
+			String params_length = httpUrl.mapToString(paramsmap);
+			Map<String, String> headParams = new HashMap<String, String>();
+			headParams.put("Content-Type", "application/x-www-form-urlencoded");
+			
+			//url = http://handset2.appl.800best.com/hyco/v1/User/HycoValidateUser
+			//http://opendev.appl.800best.com/hscedev/v1/User/HycoValidateUser
+			String result  = httpUrl
+					.post("http://opendev.appl.800best.com/hscedev/v1/User/HycoValidateUser",
+							paramsmap, headParams);
+			Log.d("登录", result);
+			return result;
+		}
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			//LoginActivity.result = result;
+			if(null != result && result.length() > 0){
+				JSONObject mJsonObject;
+				Login mLogin=new Login();
+				handler.sendEmptyMessage(0x001);
+				try {
+					mJsonObject = new JSONObject(result);
+					String validationmessage=mJsonObject.getString("validationmessage") ;  
+					String token=mJsonObject.getString("token") ;  
+					String sitecode=mJsonObject.getString("sitecode") ;  
+					String sitename=mJsonObject.getString("sitename") ;  
+					String usercode=mJsonObject.getString("usercode") ;  
+					String sitetypename=mJsonObject.getString("sitetypename") ; 
+					String username=mJsonObject.getString("username") ; 
+					mLogin.setValidationmessage(validationmessage);
+					mLogin.setToken(token);
+					mLogin.setSitecode(sitecode);
+					mLogin.setSitename(sitename);
+					mLogin.setSitetypename(sitetypename);
+					mLogin.setUsercode(usercode);
+					mPreferences.edit().putString("username", username).commit();
+					mPreferences.edit().putString("sitename", sitename).commit();
+					mPreferences.edit().putString("token", token).commit();
+					
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				if(null != mLogin.getValidationmessage()){
+				if (mLogin.getValidationmessage().equals("验证通过")) {
+					
+					mPreferences.edit().putString("X-Auth-Site", companycode.getText().toString()).commit();
+					mPreferences.edit().putString("X-Auth-User", name.getText().toString()).commit();
+					SaveShardMessage.setLogin_token(mLogin.getToken());
+					Toast.makeText(getApplicationContext(), "登录成功！", Toast.LENGTH_SHORT).show();
+					userText.setText(mPreferences.getString("username", "未定义用户名"));
+					nametext.setText(mPreferences.getString("sitename", "未定义站点"));
+					Intent mIntent=new Intent(LoginActivity.this,MainmenuActivity.class);
+					mIntent.putExtra("name", name.getText().toString());
+					mIntent.putExtra("password", password.getText().toString());
+					mIntent.putExtra("companycode", companycode.getText().toString());
+					startActivity(mIntent);	
+				}else if(mLogin.getValidationmessage().equals("用户名不存在")){
+					Toast.makeText(getApplicationContext(), "用户名不存在！", Toast.LENGTH_SHORT).show();
+				}else{
+					Toast.makeText(getApplicationContext(), "登录失败！", Toast.LENGTH_SHORT).show();
+				}
+				}
+			}
+		}
+	}
+}
+

@@ -1,0 +1,100 @@
+package com.baishi.db.cn;
+
+import java.util.ArrayList;
+
+import com.arrive.DaoJianSQLite;
+
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+public class GetSaveDabaseSQ {
+	public SQLiteDatabase database;
+
+	public GetSaveDabaseSQ(SQLiteDatabase database) {
+		super();
+		this.database = database;
+	}
+	public  ArrayList<FaJianSQLite> getFajianData(SQLiteDatabase database,int current_num, int get_count,boolean pullUP2lod){
+		ArrayList<FaJianSQLite> faJianSQLite=new ArrayList<FaJianSQLite>();
+		int index_start = current_num;
+		int count = get_count;
+		faJianSQLite.clear();
+		if(pullUP2lod){
+			if(current_num >= 0 && current_num < get_count){
+				index_start = 0;
+				count = current_num;
+			}
+			else{
+				index_start = current_num - get_count;
+			}
+		}else{
+			if(current_num > get_count){
+				index_start = current_num - get_count;
+			}else{
+				index_start = 0;
+				count = current_num;
+			}
+		}
+		Cursor cursor =database.rawQuery("select * from BaiShiFajian order by _id asc limit ?,?", new String[]{String.valueOf(index_start), String.valueOf(count)});
+		while(cursor.moveToNext()){
+			int uid2=cursor.getInt(cursor.getColumnIndex("_id"));
+			String billCode=cursor.getString(cursor.getColumnIndex("BillCode"));
+			String nextSite=cursor.getString(cursor.getColumnIndex("NextSite"));
+			String scanTime=cursor.getString(cursor.getColumnIndex("ScanTime"));
+			String scanDate = cursor.getString(cursor.getColumnIndex("ScanDate"));
+			String vehicleNo=cursor.getString(cursor.getColumnIndex("VehicleNo"));
+			FaJianSQLite user = new FaJianSQLite();
+			user.setBillCode(billCode);
+			user.setNextSite(nextSite);
+			user.setScanTime(scanTime);
+			user.setScanDate(scanDate);
+			user.setVehicleNo(vehicleNo);
+			user.setIndex(uid2);
+			faJianSQLite.add(user);
+		}
+		return faJianSQLite;
+	}
+	
+	public  ArrayList<DaoJianSQLite> getDaojianData(SQLiteDatabase database,int current_num, int get_count,boolean pullUP2lod){
+		ArrayList<DaoJianSQLite> daoJianSQLite=new ArrayList<DaoJianSQLite>();
+		int index_start = current_num;
+		int count = get_count;
+		daoJianSQLite.clear();
+		if(pullUP2lod){
+			if(current_num >= 0 && current_num < get_count){
+				index_start = 0;
+				count = current_num;
+			}
+			else{
+				index_start = current_num - get_count;
+			}
+		}else{
+			if(current_num > get_count){
+				index_start = current_num - get_count;
+			}else{
+				index_start = 0;
+				count = current_num;
+			}
+		}
+		Cursor cursor =database.rawQuery("select * from BaiShiDaojian order by _id asc limit ?,?", new String[]{String.valueOf(index_start), String.valueOf(count)});
+		while(cursor.moveToNext()){
+			int uid2=cursor.getInt(cursor.getColumnIndex("_id"));
+			String billCode=cursor.getString(cursor.getColumnIndex("BillCode"));
+			String preSite=cursor.getString(cursor.getColumnIndex("PreSite"));
+			String scanTime=cursor.getString(cursor.getColumnIndex("ScanTime"));
+			String scanDate = cursor.getString(cursor.getColumnIndex("ScanDate"));
+			String vehicleNo=cursor.getString(cursor.getColumnIndex("VehicleNo"));
+			DaoJianSQLite user = new DaoJianSQLite();
+			user.setBillCode(billCode);
+			user.setPreSite(preSite);
+			user.setScanTime(scanTime);
+			user.setScanDate(scanDate);
+			user.setVehicleNo(vehicleNo);
+			user.setIndex(uid2);
+			daoJianSQLite.add(user);
+		}
+		return daoJianSQLite;
+	}
+
+}

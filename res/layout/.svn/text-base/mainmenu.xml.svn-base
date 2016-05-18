@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#393C36" 
+    android:paddingTop="10dp">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" >
+
+        <Button
+            android:id="@+id/yewubutton"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/login_button_selector"
+            android:onClick="onclick"
+            android:text="业务操作" />
+
+        <Button
+            android:id="@+id/delectscanbutton"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/yewubutton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/login_button_selector"
+            android:onClick="onclick"
+            android:text="删除扫描" />
+
+        <Button
+            android:id="@+id/setingbutton"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/delectscanbutton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/login_button_selector"
+            android:onClick="onclick"
+            android:text="系统设置" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relativeLayout1"
+        android:layout_marginTop="20dp" >
+
+        <Button
+            android:id="@+id/Shuttle_bus_back_button"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/login_button_selector"
+            android:onClick="onclick"
+            android:text="退出" />
+    </RelativeLayout>
+
+</RelativeLayout>

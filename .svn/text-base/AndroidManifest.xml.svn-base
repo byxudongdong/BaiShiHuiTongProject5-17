@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.baishihuitong"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="18"
+        android:targetSdkVersion="21" />
+    <uses-permission android:name="android.permission.INTERNET" />
+     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+	<uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
+       <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+<uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+          <activity android:name="com.example.baishihuitong.MainmenuActivity"></activity>
+          <category android:name="android.intent.category.DEFAULT" /> 
+          <activity android:name="com.example.baishihuitong.BusinessActivity"></activity>
+          <category android:name="android.intent.category.DEFAULT" /> 
+          <activity android:name="com.example.baishihuitong.SettingActivity"></activity>
+          <category android:name="android.intent.category.DEFAULT" />
+          <activity android:name="com.example.baishihuitong.BusinessselectActivity"></activity>
+          <category android:name="android.intent.category.DEFAULT" />
+          <activity android:name="com.example.baishihuitong.TimeselectActivity"></activity>
+          <category android:name="android.intent.category.DEFAULT" />
+          <activity android:name="com.example.baishihuitong.SendscanActivity"></activity>
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <activity android:name="com.example.baishihuitong.PacketscanningActivity"></activity>
+          <category android:name="android.intent.category.DEFAULT" />
+         <activity
+            android:name="com.baishihuitong.activity.InforMationActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+         <activity android:name="LoginActivity">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN"/>
+                 <category android:name="android.intent.category.LAUNCHER"/>
+             </intent-filter>
+         </activity>
+         <activity android:name="sendupSet.SendupSet"></activity>
+         <activity android:name="com.bluetooth.BluetoothSearchActivity"></activity>
+         <activity android:name="com.bluetooth.DeviceScanActivity"></activity>
+         <service android:name="com.bluetooth.BluetoothLeService"></service>
+		<service android:name="com.example.baishihuitong.PacketServices"></service>
+		<activity android:name="com.example.baishihuitong.SearchrecrodActivity"></activity>
+		<activity android:name="com.arrive.ArrivescanActivity"></activity>
+		<activity android:name="com.query.FajianQueryByTime"></activity>
+		<activity android:name="sendupSet.FajianQueryBytoday"></activity>
+    </application>
+</manifest>

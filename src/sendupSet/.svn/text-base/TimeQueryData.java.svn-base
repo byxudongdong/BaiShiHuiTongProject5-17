@@ -1,0 +1,130 @@
+package sendupSet;
+
+import java.util.ArrayList;
+
+import com.arrive.DaoJianSQLite;
+import com.baishi.db.cn.FaJianSQLite;
+
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+public class TimeQueryData {
+	private String WHERE;
+	private SQLiteDatabase database;
+	
+	private static final int FAJIAN = 0;
+	private static final int DAOJIAN = 1;
+	private static final int JIBAO = 2;
+
+	ArrayList<FaJianSQLite> faJianSQLite=new ArrayList<FaJianSQLite>();
+	ArrayList<DaoJianSQLite> daoJianSQLite=new ArrayList<DaoJianSQLite>();
+	
+	
+	public TimeQueryData(SQLiteDatabase database) {
+		super();
+		this.database = database;
+	}
+
+	public ArrayList<FaJianSQLite> getFaJianSQLite(String time,int start,int end){
+		getCursor(time, FAJIAN,start,end);
+		return faJianSQLite;
+	}
+	
+	public void getCursor(String time, int flage,int start,int end) {
+		if (flage == FAJIAN) {
+			Cursor cursor = database
+					.rawQuery(
+							"select * from BaiShiFajian WHERE ScanDate=? order by _id asc limit ?,?",
+							new String[] {time,String.valueOf(start),String.valueOf(end)});
+			CursormoveToNext(cursor,FAJIAN);		
+		} else if (flage == DAOJIAN) {
+			Cursor cursor = database
+					.rawQuery(
+							"select * from BaiShiDaoJian WHERE ScanDate=? order by _id",
+							new String[] {time});
+			CursormoveToNext(cursor,DAOJIAN);	
+		} else if (flage == JIBAO) {
+			Cursor cursor = database
+					.rawQuery(
+							"select * from BaiShiJiBao WHERE ScanDate=? order by _id",
+							new String[] {time});
+			CursormoveToNext(cursor,JIBAO);	
+		}
+	}
+
+
+	public void CursormoveToNext(Cursor cursor,int flag){
+		if(flag == FAJIAN){
+			CursorFaJianmoveToNext(cursor);
+		}else if(flag == DAOJIAN){
+			CursorDaoJianmoveToNext(cursor);
+		}
+	}
+	public void CursorFaJianmoveToNext(Cursor cursor) {
+		faJianSQLite.clear();
+		while(cursor.moveToNext()){
+			int uid2=cursor.getInt(cursor.getColumnIndex("_id"));
+			String billCode=cursor.getString(cursor.getColumnIndex("BillCode"));
+			String nextSite=cursor.getString(cursor.getColumnIndex("NextSite"));
+			String scanTime=cursor.getString(cursor.getColumnIndex("ScanTime"));
+			String scanDate=cursor.getString(cursor.getColumnIndex("ScanDate"));
+			String vehicleNo=cursor.getString(cursor.getColumnIndex("VehicleNo"));
+			FaJianSQLite user = new FaJianSQLite();
+
+			user.setBillCode(billCode);
+			user.setNextSite(nextSite);
+			user.setScanTime(scanTime);
+			user.setScanDate(scanDate);
+			user.setVehicleNo(vehicleNo);
+			user.setIndex(uid2);
+			faJianSQLite.add(user);
+		}
+	}
+	
+public void CursorDaoJianmoveToNext(Cursor cursor) {
+		
+		while(cursor.moveToNext()){
+			int uid2=cursor.getInt(cursor.getColumnIndex("_id"));
+			String billCode=cursor.getString(cursor.getColumnIndex("BillCode"));
+			String preSite=cursor.getString(cursor.getColumnIndex("PreSite"));
+			String scanTime=cursor.getString(cursor.getColumnIndex("ScanTime"));
+			String scanDate=cursor.getString(cursor.getColumnIndex("ScanDate"));
+			String vehicleNo=cursor.getString(cursor.getColumnIndex("VehicleNo"));
+			DaoJianSQLite user = new DaoJianSQLite();
+
+			user.setBillCode(billCode);
+			user.setPreSite(preSite);
+			user.setScanTime(scanTime);
+			user.setScanDate(scanDate);
+			user.setVehicleNo(vehicleNo);
+			user.setIndex(uid2);
+			daoJianSQLite.add(user);
+		}
+	}
+	
+
+	public boolean setFajianCursor(String number_value) {
+		faJianSQLite.clear();
+		Cursor cursor = database.rawQuery(
+				"select * from BaiShiFajian WHERE BillCode=? order by _id",
+				new String[] {number_value});
+		CursormoveToNext(cursor,FAJIAN);
+		if(faJianSQLite.size() > 0){
+			return false;
+		}
+		return true;
+	}
+
+	
+	public boolean setDaojianCursor(String number_value) {
+		daoJianSQLite.clear();
+		Cursor cursor = database.rawQuery(
+				"select * from BaiShiDaojian WHERE BillCode=? order by _id",
+				new String[] {number_value});
+		CursormoveToNext(cursor,DAOJIAN);
+		if(daoJianSQLite.size() > 0){
+			return false;
+		}
+		return true;
+	}
+}

@@ -1,0 +1,170 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#393C36" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="目 的 站:"
+                android:textColor="#F7F7F7"
+                android:textSize="15dp" />
+
+            <EditText
+                android:id="@+id/packnextname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="#F7F7F7"
+                 />
+
+            <TextView
+                android:id="@+id/packverify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="3dp"
+                android:text="验证"
+                android:textColor="#F7F7F7"
+                android:textSize="15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="包      号:"
+                android:textColor="#F7F7F7"
+                android:textSize="15dp" />
+
+            <EditText
+                android:id="@+id/packworkorder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="#F7F7F7"
+                android:password="true" />
+
+            <TextView
+                android:id="@+id/packnolock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="3dp"
+                android:text="未锁"
+                android:textColor="#F7F7F7"
+                android:textSize="15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="运 单 号:"
+                android:textColor="#F7F7F7"
+                android:textSize="15dp" />
+
+            <EditText
+                android:id="@+id/packwaybillnumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="#F7F7F7" />
+        </LinearLayout>
+
+          <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" 
+            android:padding="2dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="2dp"
+            android:background="#ffffff">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="#000000"
+                android:text="0票"
+                android:textColor="#eefb05" />
+
+            <com.baishihuitong.untils.ListViewCompat
+                android:id="@+id/packages_daolistview"
+                android:layout_width="match_parent"
+                android:background="#000000"
+                android:layout_height="120dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/packfanhui"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:onClick="onclick"
+                android:text="返回"
+                android:textColor="#F7F7F7" />
+
+            <Button
+                android:id="@+id/packdelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:onClick="onclick"
+                android:text="删除"
+                android:textColor="#F7F7F7" />
+
+            <Button
+                android:id="@+id/packqueding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:onClick="onclick"
+                android:text="确定"
+                android:textColor="#F7F7F7" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,129 @@
+package sendupSet;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+import com.baishi.db.cn.DBHelper;
+import com.baishi.db.cn.FaJianSQLite;
+import com.baishihuitong.untils.ListViewCompat;
+import com.example.baishihuitong.R;
+import com.example.baishihuitong.SendscanActivity;
+import com.query.FajianQueryByTime;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Window;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class FajianQueryBytoday extends Activity{
+	public ListViewCompat lisview;
+	public TextView fajian_number_all;
+	public fajian_query_bytoday_adapter adapter;
+	public TimeQueryData timeQuery;
+	public DBHelper dbHelper;
+	private SQLiteDatabase database;
+	ArrayList<FaJianSQLite> faJianSQLite_today = new ArrayList<FaJianSQLite>();
+	String key_value;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.fajian_query_bytoday);
+		final Intent intent = getIntent();
+		key_value = intent.getStringExtra("key_intent");
+		
+		fajian_number_all = (TextView) findViewById(R.id.fajian_number_all);
+		
+		lisview = (ListViewCompat) findViewById(R.id.fajian_query_listview);
+		dbHelper = new DBHelper(this);
+		database = dbHelper.getWritableDatabase();
+		timeQuery = new TimeQueryData(database);
+		
+		refresh(0, 10,false);
+		adapter = new fajian_query_bytoday_adapter(FajianQueryBytoday.this, faJianSQLite_today);
+		lisview.setAdapter(adapter);
+		if(!(faJianSQLite_today.size() > 0)){
+			
+			Toast.makeText(FajianQueryBytoday.this, "没有上传数据", Toast.LENGTH_SHORT).show();
+		}
+		mListViewRefresh();
+		
+	}
+	
+	public void refresh(int start,int end,boolean flag){
+		ArrayList<FaJianSQLite> faJianSQLite = new ArrayList<FaJianSQLite>();
+		if(!flag)
+			faJianSQLite_today.clear();
+		if(key_value.equals("today_intent")){
+			faJianSQLite = timeQuery.getFaJianSQLite(getCurrentTime("yyyy-MM-dd"),start,end);
+		}else if(key_value.equals("yesterday_intent")){
+			String ss = getYesterday(yesterday);
+			Log.d("昨天数据", ss);
+			faJianSQLite = timeQuery.getFaJianSQLite(ss,start,end);
+		}else  if(key_value.equals("befor_yesterday_intent")){
+			faJianSQLite = timeQuery.getFaJianSQLite(getYesterday(bofor_yesterday),start,end);
+		}
+		faJianSQLite_today.addAll(faJianSQLite);
+		fajian_number_all.setText("数据总数：" + faJianSQLite_today.size());
+	}
+	public int number_index = 0;
+	public void mListViewRefresh() {
+		lisview.setPullRefreshEnable(true);
+		lisview.setPullLoadEnable(true);
+		lisview.setXListViewListener(new ListViewCompat.IXListViewListener() {
+			public void onRefresh() {
+				lisview.setRefreshTime(getCurrentTime("yyyy-MM-dd HH:mm:ss"));
+				
+				refresh(0, 10,false);
+				adapter.setList_data(faJianSQLite_today);
+				adapter.notifyDataSetChanged();
+			}
+
+			public void onLoadMore() {
+				number_index += 10;
+				refresh(number_index, 10, true);
+				adapter.setList_data(faJianSQLite_today);
+				adapter.notifyDataSetChanged();
+				lisview.stopRefresh();
+				lisview.stopLoadMore();
+			}
+		});
+	}
+	
+	long yesterday = 1000*60*60*24;
+	long bofor_yesterday = yesterday *24;
+	public String getYesterday(long yesterday){
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		String time =  getCurrentTime("yyyy-MM-dd");
+		long current_time = getOldTime(time);
+		Log.d("昨天数据", time +"//" +current_time);
+		Date date = new Date(current_time - yesterday);
+		return sdf.format(date);
+	}
+	public long getOldTime(String time){
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		long timeStart = 0;
+		try {
+			timeStart = sdf.parse(time).getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return timeStart;
+	}
+	
+	/**
+	 * 获得当前时间
+	 */
+	public String getCurrentTime(String current_time) {
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat(current_time);
+		return formatter.format(date);
+	}
+}

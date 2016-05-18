@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+     <TextView android:id="@+id/fajian_query_today_NextSite"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#000000"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="站点"
+            android:textColor="#ffffff" />
+    <TextView android:id="@+id/fajian_query_today_VehicleNo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#000000"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="任务单"
+            android:textColor="#ffffff" />
+       
+        <TextView android:id="@+id/fajian_query_today_BillCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#000000"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="运单号"
+            android:textColor="#ffffff" />
+
+</LinearLayout>

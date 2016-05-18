@@ -1,0 +1,67 @@
+package com.example.baishihuitong;
+
+import com.baishihuitong.untils.MyApplication;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import android.widget.Toast;
+
+public class MainmenuActivity extends Activity {
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+	    setContentView(R.layout.mainmenu);
+	}
+	public void onclick(View v){
+		switch (v.getId()) {
+		case R.id.yewubutton:
+			Intent yIntent=new Intent(MainmenuActivity.this,BusinessActivity.class);
+			yIntent.putExtra("name", getIntent().getStringExtra("name"));
+			yIntent.putExtra("password", getIntent().getStringExtra("password"));
+			yIntent.putExtra("companycode", getIntent().getStringExtra("companycode"));
+			startActivity(yIntent);
+			break;
+		case R.id.delectscanbutton:
+			Toast.makeText(this, "此功能暂未实现！", Toast.LENGTH_SHORT).show();
+			break;
+		case R.id.setingbutton:
+			startActivity(new Intent(MainmenuActivity.this,SettingActivity.class));
+			break;
+		case R.id.Shuttle_bus_back_button:
+			//finish();
+			AlertDialog.Builder builder=new Builder(MainmenuActivity.this);
+			builder.setMessage("确认返回登录界面？");
+			builder.setTitle("询问");
+			builder.setPositiveButton("确认",new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					MyApplication application=(MyApplication) getApplication();
+					if (application.getServices()!=null) {
+						application.getServices().stopSelf();
+					}	
+					MainmenuActivity.this.finish();
+				}
+			});
+			builder.setNegativeButton("取消", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			builder.create().show();
+			break;
+
+		default:
+			break;
+		}
+	}
+}

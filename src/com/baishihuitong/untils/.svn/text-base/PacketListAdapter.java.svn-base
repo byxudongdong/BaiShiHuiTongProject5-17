@@ -1,0 +1,93 @@
+package com.baishihuitong.untils;
+import java.util.List;
+import com.baishi.db.cn.Holder;
+import com.baishi.db.cn.PacketUtils;
+import com.example.baishihuitong.R;
+import android.content.Context;
+import android.graphics.Color;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+public class PacketListAdapter extends BaseAdapter{
+	private List<PacketUtils> mList;
+	private Context mContex;
+	private LayoutInflater inflater;
+	public PacketListAdapter(Context mContext,List<PacketUtils> mList){
+		this.mContex=mContext;
+		this.mList=mList; 
+		inflater=LayoutInflater.from(mContex);
+		//Log.i("mList", mList.size()+"");
+	}
+
+	@Override
+	public int getCount() {
+		// TODO Auto-generated method stub
+		return mList.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		// TODO Auto-generated method stub
+		return position;
+	}
+
+	@Override
+	public long getItemId(int position) {
+		// TODO Auto-generated method stub
+		return position;
+	}
+
+	@Override
+	public View getView(final int position, View convertView,
+			ViewGroup parent) {
+		final Holder vh;
+		if (convertView == null) {
+			convertView =inflater.inflate(R.layout.companyadapter, null, false);
+			vh = new Holder(convertView);
+			//vh.mCheckBox.setTag(position);
+			convertView.setTag(vh);
+		} else {
+			vh = (Holder) convertView.getTag();
+			//vh.mCheckBox.setTag(position);
+		}
+		vh.mNumber.setText(mList.get(position).getBillCode());
+		vh.mTime.setText(mList.get(position).getBagNumber());
+		if(mList.get(position).isFlag()){
+			vh.mNumber.setTextColor(Color.RED);
+			vh.mTime.setTextColor(Color.RED);
+		}else{
+			vh.mNumber.setTextColor(Color.WHITE);
+			vh.mTime.setTextColor(Color.WHITE);
+		}
+//		vh.mCheckBox.setOnCheckedChangeListener(null);
+//		final int po = (int) vh.mCheckBox.getTag();
+//		vh.mCheckBox.setOnCheckedChangeListener(null);
+//		if(mList.get(po).isFlag()){
+//			vh.mCheckBox.setChecked(true);
+//		}else{
+//			vh.mCheckBox.setChecked(false);
+//		}
+//		if (mList.get(po).getA()==2) {
+//			vh.mCheckBox.setVisibility(View.GONE);
+//			vh.tZhuangTai.setText("已传");
+//		}else {
+//			vh.mCheckBox.setVisibility(View.VISIBLE);
+//			vh.tZhuangTai.setText("未传");
+//		}
+//		vh.mCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//			@Override
+//			public void onCheckedChanged(CompoundButton buttonView,
+//					boolean isChecked) {
+//				if (isChecked) {
+//					mList.get(po).setFlag(true);
+//				} else {
+//					mList.get(po).setFlag(false);
+//				}
+//			}
+//		});
+		return convertView;
+	}
+}

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp" >
+
+            <Button
+                android:id="@+id/yetongbutton"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/login_button_selector"
+                android:onClick="onclick"
+                android:text="业绩统计" />
+
+            <Button
+                android:id="@+id/fascanbutton"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/yetongbutton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/login_button_selector"
+                android:onClick="onclick"
+                android:text="发件扫描" />
+
+            <Button
+                android:id="@+id/daoscanbutton"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fascanbutton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/login_button_selector"
+                android:onClick="onclick"
+                android:text="到件扫描" />
+
+            <Button
+                android:id="@+id/jiscanbutton"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/daoscanbutton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/login_button_selector"
+                android:onClick="onclick"
+                android:text="集包扫描" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/relativeLayout1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp" >
+
+            <Button
+                android:id="@+id/businessback_button"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/login_button_selector"
+                android:onClick="onclick"
+                android:text="返回" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</ScrollView>

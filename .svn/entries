@@ -1,0 +1,134 @@
+8
+
+dir
+470
+https://192.168.0.145/svn/Android/BaiShiHuiTongProject
+https://192.168.0.145/svn/Android
+
+
+
+2016-05-04T05:47:58.039360Z
+470
+zhang
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+c6cf25a5-7616-9a4f-a3fd-f7b562809941
+
+.classpath
+file
+
+
+
+
+2016-04-29T08:15:01.431000Z
+325a7c6ac16e1ed73a2f16f19b367319
+2016-04-29T08:16:21.783641Z
+380
+zhang
+
+.project
+file
+
+
+
+
+2016-04-29T08:15:01.447000Z
+e119a3187aba81d4bc02d3ffa44c6e0f
+2016-04-29T08:16:21.783641Z
+380
+zhang
+
+.settings
+dir
+
+AndroidManifest.xml
+file
+547
+
+
+
+2016-05-05T06:29:02.126000Z
+54c9969094c9041ef4b89ea464258695
+2016-05-05T06:44:15.965363Z
+547
+li
+
+assets
+dir
+
+bin
+dir
+
+gen
+dir
+
+ic_launcher-web.png
+file
+
+
+
+
+2016-04-29T08:15:04.107000Z
+03162f4ee138bcbae36f78b1d25dbd5b
+2016-04-29T08:16:21.783641Z
+380
+zhang
+has-props
+
+libs
+dir
+
+lint.xml
+file
+
+
+
+
+2016-04-29T08:15:04.388000Z
+1ce274a186a2afb9f76542702f6ecc4d
+2016-04-29T08:16:21.783641Z
+380
+zhang
+
+proguard-project.txt
+file
+
+
+
+
+2016-04-29T08:15:04.388000Z
+18bfe77c342b4698f1cef19cf8d918e2
+2016-04-29T08:16:21.783641Z
+380
+zhang
+
+project.properties
+file
+
+
+
+
+2016-04-29T08:15:04.388000Z
+6bc29827a20f0391406586601017da3b
+2016-04-29T08:16:21.783641Z
+380
+zhang
+
+res
+dir
+
+src
+dir
+

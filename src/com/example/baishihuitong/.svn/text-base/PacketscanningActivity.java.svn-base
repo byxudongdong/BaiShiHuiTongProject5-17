@@ -1,0 +1,764 @@
+package com.example.baishihuitong;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import org.json.JSONObject;
+
+import android.R.integer;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.text.Editable;
+import android.text.Selection;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.baishi.db.cn.PacketSql;
+import com.baishi.db.cn.PacketUtils;
+import com.baishihuitong.untils.HttpUrl;
+import com.baishihuitong.untils.ListViewCompat;
+import com.baishihuitong.untils.ListViewCompat.IXListViewListener;
+import com.baishihuitong.untils.MyApplication;
+import com.baishihuitong.untils.PacketListAdapter;
+public class PacketscanningActivity extends Activity implements OnClickListener
+,OnKeyListener,OnItemClickListener,OnCheckedChangeListener{
+	private EditText nextname;//下一站
+	private EditText workorder;//任务单
+	private EditText waybillnumber;//运单号
+	private TextView verify;//验证
+	private TextView nolocal;//未锁
+	private TextView uploadNumber;
+	private ListView mListView;//显示蓝牙已扫描到的运单号
+	private Button fanhui;//返回
+	private Button delect;//删除
+	private Button queding;//确定
+	private TextView numberTextview;//扫描个数
+	public final static String ACTION_DATA_AVAILABLE = "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
+	public final static String EXTRA_DATA = "com.example.bluetooth.le.EXTRA_DATA";
+	private String mNumber;
+	private PacketSql mPacketSql;
+	private PacketListAdapter mAdapter;
+	private List<PacketUtils> mList;
+	private PacketUtils mUtils;
+	//private CheckBox mCheckBox; 
+	private static final String URL_PACKET="http://opendev.appl.800best.com/hscedev/v1/HTSite/HycoSearchSite";
+	public static final int MSG_INIT = 0;
+	private String name;
+	private String password;
+	private String companycode;
+	private SharedPreferences ps;
+	private boolean mboolean=true;
+	private PacketServices mServices;
+	private String comCode="";
+	private String bigNumber="";
+	private String billCode="";
+	private boolean flags=true;
+	  private static final String APPID = "appid=519328ab";
+	private String siteNmae="null";
+	private int pos;
+	private static String ZHUANGTAI="com.example.baishihuitong";
+	private LinearLayout mLinearLayout;
+	private int size;
+	private MyApplication application;
+	private ServiceConnection conn=new ServiceConnection() {	
+		@Override
+		public void onServiceDisconnected(ComponentName name) {	
+		}	
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			mServices=((PacketServices.Mybind)service).getService();
+			 application.setServices(mServices);//将Services保存到application应用里
+		}
+	};
+	private Handler mHandler=new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			switch (msg.what) {
+			case MSG_INIT:
+				String result=(String) msg.obj;
+				IntentFilter filter = new IntentFilter();
+				filter.addAction(ACTION_DATA_AVAILABLE);
+				filter.addAction(ZHUANGTAI);
+				registerReceiver(mReceiver, filter);
+			//	Toast.makeText(getApplicationContext(), result+"", 1000).show();
+				Log.i("handleMessage", result);
+				try {
+					JSONObject mJsonObject=new JSONObject(result);
+					 siteNmae=mJsonObject.getString("sitename");
+					 
+//					 if (siteNmae.equals("null")) {
+//						
+//					}
+					 Log.i("siteNmae", siteNmae);
+					if (siteNmae.equals("null")) {
+//					    SynthesizerPlayer player = SynthesizerPlayer.createSynthesizerPlayer(PacketscanningActivity.this, APPID);
+//			            //设置语音朗读者，可以根据需要设置男女朗读，具体请看api文档和官方论坛
+//			            player.setVoiceName("vivixiaoyan");//在此设置语音播报的人选例如：vivixiaoyan、vivixiaomei、vivixiaoqi
+//			            player.playText("服务器验证失败！", "ent=vivi21,bft=5",null);
+						mLinearLayout.setVisibility(View.GONE);
+						nextname.setText(comCode);	
+						Toast.makeText(getApplicationContext(), "服务器验证失败！", Toast.LENGTH_SHORT).show();
+						return;
+					}else {
+//						   SynthesizerPlayer player = SynthesizerPlayer.createSynthesizerPlayer(PacketscanningActivity.this, APPID);
+//				            //设置语音朗读者，可以根据需要设置男女朗读，具体请看api文档和官方论坛
+//				            player.setVoiceName("vivixiaoyan");//在此设置语音播报的人选例如：vivixiaoyan、vivixiaomei、vivixiaoqi
+//				            player.playText("目的站是"+siteNmae, "ent=vivi21,bft=5",null);
+						mLinearLayout.setVisibility(View.GONE);
+				            nextname.setText(siteNmae);	
+				        	workorder.requestFocus();
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;		
+			}
+		};
+	};
+	private BroadcastReceiver mReceiver=new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction()==ACTION_DATA_AVAILABLE) {
+				mNumber=intent.getStringExtra(EXTRA_DATA);
+				Log.i("onReceive", mNumber);	
+				checkNumberCode(mNumber);
+				Log.i("onReceive", mNumber);	
+			}else if(intent.getAction()==ZHUANGTAI){
+				size=intent.getIntExtra("size", 0);
+				int b=mList.size()-size;
+				String mString=String.valueOf(b);
+				numberTextview.setText(mString);
+			Log.i("ZHUANGTAI", ZHUANGTAI);
+			}
+		}
+	};
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		//取消状态栏   
+		  this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
+		    WindowManager.LayoutParams.FLAG_FULLSCREEN); 
+	    setContentView(R.layout.packagescannings);
+	    init();
+	    ps=getSharedPreferences("mode", MODE_PRIVATE);
+	}
+	public void init(){
+		nextname=(EditText)findViewById(R.id.packnextname);
+		workorder=(EditText)findViewById(R.id.packworkorder);
+		waybillnumber=(EditText)findViewById(R.id.packwaybillnumber);
+		verify=(TextView)findViewById(R.id.packverify);
+		nolocal=(TextView)findViewById(R.id.packnolock);
+		fanhui=(Button)findViewById(R.id.packfanhui);
+		delect=(Button)findViewById(R.id.packdelect);
+		queding=(Button)findViewById(R.id.packqueding);
+		mListView=(ListView) findViewById(R.id.daolistvie);
+		//mCheckBox=(CheckBox) findViewById(R.id.checkBox1);
+		numberTextview=(TextView) findViewById(R.id.numbertex);
+		uploadNumber=(TextView) findViewById(R.id.textViews);
+		mLinearLayout=(LinearLayout) findViewById(R.id.dialog_progress_line);
+		mLinearLayout.setVisibility(View.GONE);
+		new Handler();
+		mPacketSql=new PacketSql(this);
+		fanhui.setOnClickListener(this);
+		delect.setOnClickListener(this);
+		queding.setOnClickListener(this);
+		nextname.setOnKeyListener(this);
+		nolocal.setOnClickListener(this);
+		verify.setOnClickListener(this);
+		nextname.setOnClickListener(this);
+		workorder.setOnClickListener(this);
+		waybillnumber.setOnClickListener(this);
+		mListView.setOnItemClickListener(this);
+		//mList=new ArrayList<PacketUtils>();
+		mList=mPacketSql.companyLists(50);
+		mAdapter=new PacketListAdapter(this, mList);
+		mListView.setAdapter(mAdapter);
+		//mCheckBox.setOnCheckedChangeListener(this);
+		name=getIntent().getStringExtra("name");
+		password=getIntent().getStringExtra("password");
+		companycode=getIntent().getStringExtra("companycode");
+		Intent serviceIntent=new Intent(PacketscanningActivity.this,PacketServices.class);
+		serviceIntent.putExtra("name", name);
+		serviceIntent.putExtra("password", password);
+		serviceIntent.putExtra("companycode", companycode);
+		startService(serviceIntent);
+		bindService(serviceIntent, conn,BIND_AUTO_CREATE );
+		uploadNumber.setText(mList.size()+"");
+		application=(MyApplication) getApplication();
+	}
+@Override
+protected void onStart() {
+	super.onStart();
+	IntentFilter filter = new IntentFilter();
+	filter.addAction(ACTION_DATA_AVAILABLE);
+	filter.addAction(ZHUANGTAI);
+	registerReceiver(mReceiver, filter);
+}
+	public void showDialog(Context context){
+		AlertDialog.Builder builder=new Builder(context);
+		builder.setMessage("确认返回登录界面？");
+		builder.setTitle("询问");
+		builder.setPositiveButton("确定",new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				PacketscanningActivity.this.finish();
+			}
+		});
+		builder.setNegativeButton("取消",new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();			
+			}
+		});
+		builder.create().show();
+	}
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.packfanhui:
+			showDialog(this);
+			break;
+		case R.id.packdelect:			
+//			 Iterator<PacketUtils> it = mList.iterator();
+//			 while (it.hasNext()) {
+//				 PacketUtils mPacketUtils= it.next();
+//				if (mPacketUtils.isFlag()==true&&mPacketUtils.getA()==1) {
+//					it.remove();
+//					mServices.setxUtils(mPacketUtils);
+//					Log.i("mPacketUtils", mPacketUtils.getBillCode());
+//				mPacketSql.deleteInformation( mPacketUtils.getBillCode());
+//				numberTextview.setText(mList.size()+"");
+//			}
+//				if (mList.size()==0) {
+//					//mCheckBox.setChecked(false);
+//					//mCheckBox.setText("全选");
+//				}		
+//			}
+			mPacketSql.deleteInformation( mList.get(pos).getBillCode());
+			mServices.setxUtils( mList.get(pos));
+			mList.remove(mList.get(pos));
+			uploadNumber.setText(mList.size()+"");
+			mAdapter.notifyDataSetChanged();
+			break;
+		case R.id.packqueding:
+			checkNumberCode(waybillnumber.getText()+"");
+			break;
+		case R.id.packnolock:
+			if (mboolean) {
+				nolocal.setText("已锁");
+				nextname.setEnabled(false);
+				workorder.setEnabled(false);
+				nextname.setBackgroundColor(Color.parseColor("#808080"));
+				workorder.setBackgroundColor(Color.parseColor("#808080"));
+				mboolean=false;
+			}else {
+				nolocal.setText("未锁");
+				nextname.setEnabled(true);
+				workorder.setEnabled(true);
+				nextname.setBackgroundColor(Color.parseColor("#F7F7F7"));
+				workorder.setBackgroundColor(Color.parseColor("#F7F7F7"));
+				mboolean=true;
+			}
+			break;
+		case R.id.packverify:
+			if (mboolean==true&&TextUtils.isEmpty(workorder.getText().toString())) {
+				nextname.setText(comCode);
+				Editable etext = nextname.getText();
+				Selection.setSelection(etext, etext.length());
+				mLinearLayout.setVisibility(View.VISIBLE);
+				unregisterReceiver(mReceiver);
+				new PacketThread(comCode).start();
+			}
+			break;
+		case R.id.packworkorder:
+			workorder.requestFocus();	
+			break;
+		case R.id.packnextname:
+			nextname.requestFocus();
+			break;
+		case R.id.packwaybillnumber:
+			waybillnumber.requestFocus();
+			break;
+		}
+		
+	}
+	// 获取当前时间
+		public String getDate() {
+			Date date = new Date();
+			DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String time = format.format(date);
+			return time;
+		}
+		// 获取当前日期
+		public String getDates() {
+			Date date = new Date();
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			String time = format.format(date);
+			return time;
+		}
+@Override
+protected void onDestroy() {
+	super.onDestroy();
+	unregisterReceiver(mReceiver);
+	unbindService(conn);
+}
+@SuppressWarnings("static-access")
+@Override
+public boolean onKey(View v, int keyCode, KeyEvent event) {
+	Log.i("onKey", "onKey");
+	if (event.getAction()==event.ACTION_DOWN) {
+		if (v.getId()==R.id.packnextname) {
+			
+		}
+	}
+	
+	return false;
+}
+
+@Override
+public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				pos=position;
+				for (int i = 0; i <mList.size(); i++) {	
+					mList.get(i).setFlag(false);
+				}
+				mList.get(pos).setFlag(true);
+				mAdapter.notifyDataSetChanged();
+}
+@Override
+public void onCheckedChanged(CompoundButton buttonView,  boolean isChecked) {
+	if (isChecked) {
+		//mCheckBox.setText("反选");
+		for (int i = 0; i < mList.size(); i++) {
+			mList.get(i).setFlag(true);
+		}
+		mAdapter.notifyDataSetChanged();
+	}else {
+		//mCheckBox.setText("全选");
+		for (int i = 0; i < mList.size(); i++) {
+			mList.get(i).setFlag(false);	
+		}
+		mAdapter.notifyDataSetChanged();
+	}
+}
+private void checkNumberCode(final String mNumber) {
+	switch (mNumber.length()) {
+	case 6:
+		//长度6位的是目的站
+		comCode=mNumber;
+		if (mboolean==true) {
+			nextname.setText(comCode);
+			Editable etext = nextname.getText();
+			Selection.setSelection(etext, etext.length());
+			nextname.requestFocus();
+			mLinearLayout.setVisibility(View.VISIBLE);
+			unregisterReceiver(mReceiver);
+			new PacketThread(comCode).start();
+		}
+	break;
+	case 12:
+		   if (mNumber.startsWith("43")&& !siteNmae.equals("null")) {
+	            if (TextUtils.isEmpty(workorder.getText())) {
+	                if (mboolean==true) {
+	                    bigNumber=mNumber;
+	                    workorder.setText(mNumber);
+	                    Editable etext = workorder.getText();
+	                    Selection.setSelection(etext, etext.length());
+	                    waybillnumber.requestFocus();
+	                }
+	            } else{
+                     if (getCurrentFocus() == workorder) {
+                        new AlertDialog.Builder(PacketscanningActivity.this).setMessage("是否替换包号?").setPositiveButton("确定",
+                                new
+                                DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //if(mNumber.startsWith("43")) {}
+                                        Log.i("NNNNNNNNNNNNNNNNNNN", "123");
+                                            workorder.setText(mNumber);
+                                            waybillnumber.setText("");
+                                            waybillnumber.requestFocus();
+                                        
+                                    }
+                                }).setNegativeButton("取消", null).show();
+                        	return;
+                    }
+                    if((workorder.getText().toString().startsWith("43"))){
+                        billCode=mNumber;
+                    waybillnumber.setText(mNumber);
+                    Editable etext = waybillnumber.getText();
+                    Selection.setSelection(etext, etext.length());
+                    waybillnumber.requestFocus();
+                    }       
+	            }
+
+	        } else if ((mNumber.startsWith("40") || mNumber.startsWith("42"))&&!siteNmae.equals("null")) {
+	            if (TextUtils.isEmpty(workorder.getText())) {
+	                if (mboolean==true) {
+	                    bigNumber=mNumber;
+	                    workorder.setText(mNumber);
+	                    Editable etext = workorder.getText();
+	                    Selection.setSelection(etext, etext.length());
+	                    workorder.requestFocus();
+	                    waybillnumber.requestFocus();
+	                }
+	            }else{
+	                if (getCurrentFocus() == workorder) {
+	                    new AlertDialog.Builder(PacketscanningActivity.this).setMessage("是否替换包号?").setPositiveButton("确定", new
+	                            DialogInterface.OnClickListener() {
+	                                @Override
+	                                public void onClick(DialogInterface dialog, int which) {
+//	                              if((mNumber.startsWith("40")&&workorder.getText().toString().startsWith("40"))||(mNumber
+//	                                          .startsWith("42")&&workorder.getText().toString().startsWith("42"))) {}
+	                                    	Log.i("NNNNNNNNNNNNNNNNNNN", "12355");
+	                                    	workorder.setText(mNumber);
+	                                    	waybillnumber.setText("");
+		                                	waybillnumber.requestFocus();
+	                                    
+	                                }
+	                            }).setNegativeButton("取消", null).show();
+	                    return;
+	                }
+	                if(workorder.getText().toString().startsWith("43")){
+	                    billCode=mNumber;
+	                    waybillnumber.setText(mNumber);
+	                    waybillnumber.requestFocus();
+	                    Editable etext = waybillnumber.getText();
+	                    Selection.setSelection(etext, etext.length());
+	                }
+
+	            }
+	        } else {
+	            if(!TextUtils.isEmpty(workorder.getText())){
+	                billCode=mNumber;
+	                waybillnumber.setText(mNumber);
+	                waybillnumber.requestFocus();
+	                Editable etext = waybillnumber.getText();
+	                Selection.setSelection(etext, etext.length());
+	            }
+	        }
+//		 if (mNumber.startsWith("43")&& !siteNmae.equals("null")) {
+//	            if (TextUtils.isEmpty(workorder.getText())) {
+//	                if (mboolean==true) {
+//	                    bigNumber=mNumber;
+//	                    workorder.setText(mNumber);
+//	                    Editable etext = workorder.getText();
+//	                    Selection.setSelection(etext, etext.length());
+//	                    waybillnumber.requestFocus();
+//	                }
+//	            } else if(workorder.getText().toString().startsWith("43")){
+//	                if (getCurrentFocus() == workorder) {
+//	                    new AlertDialog.Builder(PacketscanningActivity.this).setMessage("是否替换包号?").setPositiveButton("确定", new
+//	                            DialogInterface.OnClickListener() {
+//	                                @Override
+//	                                public void onClick(DialogInterface dialog, int which) {
+//	                                	workorder.setText(mNumber);
+//	                                	waybillnumber.setText("");
+//	                                	waybillnumber.requestFocus();
+//	                                }
+//	                            }).setNegativeButton("取消", null).show();
+//	                    return;
+//	                }
+//	                billCode=mNumber;
+//	                waybillnumber.setText(mNumber);
+//	                Editable etext = waybillnumber.getText();
+//	                Selection.setSelection(etext, etext.length());
+//	                waybillnumber.requestFocus();
+//	            }
+//	        } else if ((mNumber.startsWith("40") || mNumber.startsWith("42"))&&!siteNmae.equals("null")) {
+//	            if (TextUtils.isEmpty(workorder.getText())) {
+//	                if (mboolean==true) {
+//	                    bigNumber=mNumber;
+//	                    workorder.setText(mNumber);
+//	                    Editable etext = workorder.getText();
+//	                    Selection.setSelection(etext, etext.length());
+//	                    workorder.requestFocus();
+//	                    waybillnumber.requestFocus();
+//	                }
+//	            }else{
+//	                if (getCurrentFocus() == workorder) {
+//	                    new AlertDialog.Builder(PacketscanningActivity.this).setMessage("是否替换包号?").setPositiveButton("确定", new
+//	                            DialogInterface.OnClickListener() {
+//	                                @Override
+//	                                public void onClick(DialogInterface dialog, int which) {
+//	                                	workorder.setText(mNumber);
+//	                                	waybillnumber.setText("");
+//	                                	waybillnumber.requestFocus();
+//	                                }
+//	                            }).setNegativeButton("取消", null).show();
+//	                    return;
+//	                }
+//	                if(workorder.getText().toString().startsWith("43")){
+//	                    billCode=mNumber;
+//	                    waybillnumber.setText(mNumber);
+//	                    waybillnumber.requestFocus();
+//	                    Editable etext = waybillnumber.getText();
+//	                    Selection.setSelection(etext, etext.length());
+//	                }
+//
+//	            }
+//	        } else {
+//	            if(!TextUtils.isEmpty(workorder.getText())){
+//	                billCode=mNumber;
+//	                waybillnumber.setText(mNumber);
+//	                waybillnumber.requestFocus();
+//	                Editable etext = waybillnumber.getText();
+//	                Selection.setSelection(etext, etext.length());
+//	            }
+//	        }
+
+//		 if (mNumber.startsWith("43")&& !siteNmae.equals("null")) {
+//	            if (TextUtils.isEmpty(workorder.getText())) {
+//	                if (mboolean==true) {
+//	                    bigNumber=mNumber;
+//	                    workorder.setText(mNumber);
+//	                    Editable etext = workorder.getText();
+//	                    Selection.setSelection(etext, etext.length());
+//	                    waybillnumber.requestFocus();
+//	                }
+//	            } else if(workorder.getText().toString().startsWith("43")){
+//	                if (getCurrentFocus() == workorder) {
+//	                    new AlertDialog.Builder(PacketscanningActivity.this).setMessage("是否替换包号?").setPositiveButton("确定", new
+//	                            DialogInterface.OnClickListener() {
+//	                                @Override
+//	                                public void onClick(DialogInterface dialog, int which) {
+//	                                	workorder.setText(mNumber);
+//	                                }
+//	                            }).setNegativeButton("取消", null).show();
+//	                    return;
+//	                }
+//	                billCode=mNumber;
+//	                waybillnumber.setText(mNumber);
+//	                Editable etext = waybillnumber.getText();
+//	                Selection.setSelection(etext, etext.length());
+//	                waybillnumber.requestFocus();
+//	            }
+//	        } else if ((mNumber.startsWith("40") || mNumber.startsWith("42"))&&!siteNmae.equals("null")) {
+//	            if (TextUtils.isEmpty(workorder.getText())) {
+//	                if (mboolean==true) {
+//	                    bigNumber=mNumber;
+//	                    workorder.setText(mNumber);
+//	                    Editable etext = workorder.getText();
+//	                    Selection.setSelection(etext, etext.length());
+//	                    workorder.requestFocus();
+//	                    waybillnumber.requestFocus();
+//	                }
+//	            }else{
+//	                if(workorder.getText().toString().startsWith("43")){
+//	                    if (getCurrentFocus() == workorder) {
+//	                        new AlertDialog.Builder(PacketscanningActivity.this).setMessage("是否替换包号?").setPositiveButton("确定", new
+//	                                DialogInterface.OnClickListener() {
+//	                                    @Override
+//	                                    public void onClick(DialogInterface dialog, int which) {
+//	                                    	workorder.setText(mNumber);
+//	                                    }
+//	                                }).setNegativeButton("取消", null).show();
+//	                        return;
+//	                    }
+//	                    billCode=mNumber;
+//	                    waybillnumber.setText(mNumber);
+//	                    waybillnumber.requestFocus();
+//	                    Editable etext = waybillnumber.getText();
+//	                    Selection.setSelection(etext, etext.length());
+//	                }
+//	            }
+//	        } else {
+//	            if(!TextUtils.isEmpty(workorder.getText())){
+//	              
+//	                billCode=mNumber;
+//	                waybillnumber.setText(mNumber);
+//	                waybillnumber.requestFocus();
+//	                Editable etext = waybillnumber.getText();
+//	                Selection.setSelection(etext, etext.length());
+//	            }
+//	        }
+
+//		  if (mNumber.startsWith("43")&& !siteNmae.equals("null")) {
+//	            if (TextUtils.isEmpty(workorder.getText())) {
+//	            	if (mboolean==true&&getCurrentFocus().getTag()==workorder) {
+//						bigNumber=mNumber;
+//						workorder.setText(mNumber);	
+//						Editable etext = workorder.getText();
+//						Selection.setSelection(etext, etext.length());
+//						waybillnumber.requestFocus();
+//					}
+//	            }else if(workorder.getText().toString().startsWith("43")){
+//					billCode=mNumber;
+//					waybillnumber.setText(mNumber);	
+//					Editable etext = waybillnumber.getText();
+//					Selection.setSelection(etext, etext.length());
+//					waybillnumber.requestFocus();
+//	            }
+//	        }else if ((mNumber.startsWith("40") || mNumber.startsWith("42"))&&!siteNmae.equals("null")) {
+//	            if (TextUtils.isEmpty(workorder.getText())) {
+//	            	if (mboolean==true&&getCurrentFocus().getTag()==workorder) {
+//						bigNumber=mNumber;
+//						workorder.setText(mNumber);	
+//						Editable etext = workorder.getText();
+//						Selection.setSelection(etext, etext.length());
+//						workorder.requestFocus();
+//						waybillnumber.requestFocus();
+//					}
+//	            }else{
+//	                if(workorder.getText().toString().startsWith("43")){
+//	                	billCode=mNumber;
+//	                	waybillnumber.setText(mNumber);
+//	                	waybillnumber.requestFocus();
+//	                	Editable etext = waybillnumber.getText();
+//						Selection.setSelection(etext, etext.length());
+//	                }
+//	            }
+//	        } else {
+//	            if(!TextUtils.isEmpty(workorder.getText())){
+//	            	billCode=mNumber;
+//	            	waybillnumber.setText(mNumber);
+//	            	waybillnumber.requestFocus();
+//                	Editable etext = waybillnumber.getText();
+//					Selection.setSelection(etext, etext.length());
+//	            }
+//	        }
+			break;
+	case 14:
+		if (!siteNmae.equals("null")&&workorder.getText().toString().length()>0) {
+			Log.i("switch", "14");
+			//长度14位的为运单号
+			billCode=mNumber;
+			waybillnumber.setText(mNumber);	
+			Editable etext = waybillnumber.getText();
+			Selection.setSelection(etext, etext.length());
+			waybillnumber.requestFocus();	
+		} 
+		
+	break;
+	case 9:
+		Log.i("switch", "9");
+		//长度9位既有数字又有字母的为运单号
+		 boolean isDigit = false;//定义一个boolean值，用来表示是否包含数字
+         boolean isLetter = false;//定义一个boolean值，用来表示是否包含字母
+      for (int i = 0; i < mNumber.length(); i++) {
+		if (Character.isDigit(mNumber.charAt(i))) {
+			isDigit=true;
+		}
+		if (Character.isLetter(mNumber.charAt(i))) {
+			isLetter=true;
+		}
+	}
+      if (isDigit==true&&isLetter==true&&!siteNmae.equals("null")&&workorder.getText().toString().length()>0) {
+    	  
+    	  billCode=mNumber;
+		waybillnumber.setText(billCode);
+		Editable etext = waybillnumber.getText();
+		Selection.setSelection(etext, etext.length());
+		waybillnumber.requestFocus();
+
+	}
+	break;
+	case 13:
+		Log.i("switch", "13");
+		 boolean isDigi = false;//定义一个boolean值，用来表示是否包含数字
+         boolean isLette = false;//定义一个boolean值，用来表示是否包含字母
+      for (int i = 0; i < mNumber.length(); i++) {
+		if (Character.isDigit(mNumber.charAt(i))) {
+			isDigi=true;
+		}
+		if (Character.isLetter(mNumber.charAt(i))) {
+			isLette=true;
+		}
+	}
+      //长度13位既有数字又有字母的为运单号
+      if (isDigi==true&&isLette==true&&!siteNmae.equals("null")&&workorder.getText().toString().length()>0) {
+    	  billCode=mNumber;
+		waybillnumber.setText(mNumber);	
+		Editable etext = waybillnumber.getText();
+		Selection.setSelection(etext, etext.length());
+		waybillnumber.requestFocus();
+	}
+	break;
+}
+	Log.i("PacketThread","comCode="+comCode+"bigNumber="+bigNumber+"billCode="+billCode);
+if (!comCode.equals("")&&!bigNumber.equals("")&&!billCode.equals("")) {
+	Log.i("PacketThread","comCode="+comCode+"bigNumber="+bigNumber+"billCode="+billCode+"  "+ps.getString("username", "无")+"  "+ps.getString("sitename", "无"));
+	long b=	mPacketSql.createDataUpload(siteNmae, bigNumber, billCode, getDate(),getDates(),ps.getString("username", "无"),ps.getString("sitename", "无"));
+		mUtils=new PacketUtils();
+		mUtils.setScanTime(getDate()+"+"+"08:00");
+		mUtils.setBillCode(billCode);  
+		mUtils.setFlag(false);
+		mUtils.setBagNumber(bigNumber);
+		mUtils.setCID(0);
+		mUtils.setA(1);
+		mUtils.setDataType(1);
+		mUtils.setDestinationSite(comCode);
+		mUtils.setIsScanBillCode(true);
+		mUtils.setItemCount(1);
+		mUtils.setScanMan(name);
+		mUtils.setScanSite(companycode);
+		mUtils.setWeight("");
+		if (b!=-1) {
+			mList.add(0, mUtils);
+			mAdapter.notifyDataSetChanged();
+			uploadNumber.setText(mList.size()+"");
+			mServices.setNumber(mList);	
+		}else {
+			Toast.makeText(this, "请不要重复扫描", Toast.LENGTH_SHORT).show();
+		}
+		
+	}	
+}
+private  class PacketThread extends Thread{
+	private String number;
+	public PacketThread(String number){
+		this.number=number;
+	}
+@Override
+public void run() {
+	super.run();
+	HttpUrl httpUrl = new HttpUrl();
+	Map<String, String> paramsmap = new HashMap<String, String>();
+	paramsmap.put("siteCode", "\"" + number + "\"");
+	Log.i("PacketThread", name +password + number);
+	Map<String, String> headParams = new HashMap<String, String>();
+	headParams.put("Content-Type", "application/x-www-form-urlencoded");
+	headParams.put("X-Auth-Token", ps.getString("token", null));
+	headParams.put("X-Auth-Site", companycode);
+	headParams.put("X-Auth-User",name );
+	String result  = httpUrl.post(URL_PACKET,paramsmap, headParams);	
+	mHandler.obtainMessage(MSG_INIT, result).sendToTarget();
+}
+}
+
+}

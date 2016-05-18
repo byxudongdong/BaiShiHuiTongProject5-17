@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/Android/!svn/ver/464/BaiShiHuiTongProject/src/com/bluetooth
+END
+Util.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/bluetooth/Util.java
+END
+BluetoothLeService.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/Android/!svn/ver/464/BaiShiHuiTongProject/src/com/bluetooth/BluetoothLeService.java
+END
+MySqlite.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/bluetooth/MySqlite.java
+END
+DisplayGattServices.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/bluetooth/DisplayGattServices.java
+END
+bluetoothListen.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/bluetooth/bluetoothListen.java
+END
+BluetoothSearchActivity.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/bluetooth/BluetoothSearchActivity.java
+END
+SlideSwitchView.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/bluetooth/SlideSwitchView.java
+END
+SampleGattAttributes.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/bluetooth/SampleGattAttributes.java
+END
+SetActionBars.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/bluetooth/SetActionBars.java
+END
+DeviceScanActivity.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/Android/!svn/ver/380/BaiShiHuiTongProject/src/com/bluetooth/DeviceScanActivity.java
+END

@@ -1,0 +1,156 @@
+package com.baishi.db.cn;
+
+import com.arrive.DaoJianSQLite;
+
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+public class SaveShardMessage {
+	public Context context;
+	public SQLiteDatabase database;
+
+	public SaveShardMessage(SQLiteDatabase database) {
+		super();
+		this.database = database;
+	}
+	public SaveShardMessage(Context context) {
+		super();
+		this.context = context;
+	}
+	
+	/**
+	 * 数据库
+	 * @param accept_msg
+	 */
+	public void saveShardFaJianMessage(FaJianSQLite accept_msg) {
+		ContentValues contentvalues = new ContentValues();
+		contentvalues.put("BillCode", accept_msg.getBillCode());
+		contentvalues.put("NextSite", accept_msg.getNextSite());
+		contentvalues.put("VehicleNo", accept_msg.getVehicleNo());
+		contentvalues.put("ScanDate", accept_msg.getScanDate());
+		contentvalues.put("ScanTime", accept_msg.getScanTime());
+		database.insert("BaiShiFajian", null, contentvalues);
+	}
+	
+	public void deleShardFaJian(int position){
+		database.delete("BaiShiFajian", "_id=?", new String[] { position
+				+ "" });
+	}
+	
+	public void deleShardDaoJian(int position){
+		database.delete("BaiShiDaoJian", "_id=?", new String[] { position
+				+ "" });
+	}
+	public void saveShardDaoJianMessage(DaoJianSQLite accept_msg) {
+		ContentValues contentvalues = new ContentValues();
+		contentvalues.put("BillCode", accept_msg.getBillCode());
+		contentvalues.put("PreSite", accept_msg.getPreSite());
+		contentvalues.put("VehicleNo", accept_msg.getVehicleNo());
+		contentvalues.put("ScanDate", accept_msg.getScanDate());
+		contentvalues.put("ScanTime", accept_msg.getScanTime());
+		database.insert("BaiShiDaoJian", null, contentvalues);
+	}
+	
+	public void saveShardJiBaoMessage(String accept_msg) {
+		ContentValues contentvalues = new ContentValues();
+		contentvalues.put("acceptMessageTime", accept_msg);
+		database.insert("BaiShiJiBao", null, contentvalues);
+	}
+	public static String TOKEN = "";
+	public static void setLogin_token(String token){
+		TOKEN = token;
+	}
+	/**
+	 * 获取数据库条码数量
+	 * @param actionBarName
+	 * @return
+	 */
+
+	public long getCount(String actionBarName){
+		String dataBase_name = "";
+		if (actionBarName.equals("发件")) {
+			dataBase_name = "BaiShiFajian";
+		} else if (actionBarName.equals("到件")) {
+			dataBase_name = "BaiShiDaoJian";
+		} else if (actionBarName.equals("集包")) {
+			dataBase_name = "BaiShiJiBao";
+		}
+		Cursor cursor =database.rawQuery("select count(*) from " + dataBase_name, null);
+		cursor.moveToFirst();
+		long reslut=cursor.getLong(0);
+		return reslut;
+	}
+	
+	/**
+	 *数据上传方式
+	 * 
+	 */
+	public void Sharedchange_sendup_flag(int change_sendup_flag) {
+		SharedPreferences settings = context.getSharedPreferences(
+				"change_sendup_flag", Activity.MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putInt("change_sendup_flag", change_sendup_flag);
+		editor.commit();
+	}
+	/**
+	 * 数据上传方式
+	 * 手动0,自动1
+	 */
+	public static int change_sendup_flag = 1;
+	public static int getchange_sendup_flag(Context activity){
+		SharedPreferences acceptMessage = activity.getSharedPreferences("change_sendup_flag", Activity.MODE_PRIVATE);
+		change_sendup_flag = acceptMessage.getInt("change_sendup_flag", 1);
+		return change_sendup_flag;
+	}
+
+	/**
+	 * 条数阀值
+	 * 
+	 * @param reversePolarity
+	 */
+	public void Sharedchange_count_flag(int change_count_flag) {
+		SharedPreferences settings = context.getSharedPreferences(
+				"change_count_flag", Activity.MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putInt("change_count_flag", change_count_flag);
+		editor.commit();
+	}
+	
+	/**
+	 * 条数阀值
+	 * 
+	 */
+	public static int change_count_flag = 20;
+	public static int getchange_count_flag(Context activity){
+		SharedPreferences acceptMessage = activity.getSharedPreferences("change_count_flag", Activity.MODE_PRIVATE);
+		change_count_flag = acceptMessage.getInt("change_count_flag", 20);
+		return change_count_flag;
+	}
+
+	/**
+	 * 延迟时间
+	 */
+	public void Sharedchange_time_flag(int change_time_flag) {
+		SharedPreferences settings = context.getSharedPreferences(
+				"change_time_flag", Activity.MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putInt("change_time_flag", change_time_flag);
+		editor.commit();
+	}
+
+
+	/**
+	 * 延迟时间
+	 */
+	public static int change_time_flag = 7;
+	public static int getchange_time_flag(Context activity){
+		SharedPreferences acceptMessage = activity.getSharedPreferences("change_time_flag", Activity.MODE_PRIVATE);
+		change_time_flag = acceptMessage.getInt("change_time_flag", 7);
+		return change_time_flag;
+	}
+}

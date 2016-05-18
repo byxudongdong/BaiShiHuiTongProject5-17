@@ -1,0 +1,19 @@
+package com.baishi.db.cn;
+
+import android.view.View;
+import android.webkit.WebView.FindListener;
+import android.widget.CheckBox;
+import android.widget.TextView;
+
+import com.example.baishihuitong.R;
+
+public class Holder {
+	public	TextView mNumber,mTime;
+	public	CheckBox mCheckBox;
+		public Holder(View view){
+			mNumber=(TextView) view.findViewById(R.id.textV1);
+			mTime=(TextView) view.findViewById(R.id.textVi2);
+		}
+	
+
+}
